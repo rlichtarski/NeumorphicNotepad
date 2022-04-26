@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:notepad/db/notes_db.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notepad/models/note.dart';
 import 'package:notepad/pages/edit_note.dart';
+import 'package:notepad/view_models/NoteViewModel.dart';
+import 'package:provider/provider.dart';
 
 class ShowNotePage extends StatefulWidget {
   const ShowNotePage({ Key? key, required this.title, required this.noteId }) : super(key: key);
@@ -18,24 +18,10 @@ class ShowNotePage extends StatefulWidget {
 class _ShowNotePageState extends State<ShowNotePage> {
 
   late Note note;
-  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    refreshPage();
-  }
-
-  Future refreshPage() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    note = await NoteDatabase.instance.readNote(widget.noteId);
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -71,32 +57,53 @@ class _ShowNotePageState extends State<ShowNotePage> {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    note.noteTitle,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.0,
-                      letterSpacing: 1.5
-                    ),
-                  ),
-                  const Divider(height: 30.0, color: Colors.white, thickness: 1),
-                  Expanded(
-                    child: Text(
-                      note.noteText,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14.0,
-                        height: 1.5,
-                        letterSpacing: 1.1
-                      ),
-                    ),
-                  ),
-                ],
+              child: Consumer<NoteViewModel>(
+                builder: (consumerContext, value, child) => FutureBuilder(
+                  future: value.readNote(widget.noteId),
+                  builder: (BuildContext context, AsyncSnapshot<Note> snapshot) {
+                    switch(snapshot.connectionState) {
+                      case ConnectionState.none: {
+                        return Text('none');
+                      }
+                      case ConnectionState.waiting: {
+                        return const SpinKitCircle(color: Colors.white, size: 50.0,);
+                      }
+                      case ConnectionState.active: {
+                        return Text('active');
+                      }
+                      case ConnectionState.done: {
+                        note = snapshot.data!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              note.noteTitle,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18.0,
+                                letterSpacing: 1.5
+                              ),
+                            ),
+                            const Divider(height: 30.0, color: Colors.white, thickness: 1),
+                            Expanded(
+                              child: Text(
+                                note.noteText,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14.0,
+                                  height: 1.5,
+                                  letterSpacing: 1.1
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    }
+                  } ,
+                ),
               ),
             ),                
           ),
@@ -134,7 +141,6 @@ class _ShowNotePageState extends State<ShowNotePage> {
                         builder: (context) => EditNotePage(title: 'Edit a note', note: note)
                       )
                     ); 
-                    refreshPage();
                   },
                 ),
               ),

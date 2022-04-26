@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:notepad/db/notes_db.dart';
 import 'package:notepad/models/note.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:notepad/view_models/NoteViewModel.dart';
+import 'package:provider/provider.dart';
 
 class EditNotePage extends StatefulWidget {
   const EditNotePage({ Key? key, required this.title, required this.note }) : super(key: key);
@@ -184,7 +183,15 @@ class _EditNotePageState extends State<EditNotePage> {
                         fontSize: 16.0
                       );
                     } else {
-                      updateNote(widget.note.id, titleController.text.toString().trim(), textController.text.toString().trim());
+                      final noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+                      noteViewModel.updateNote(
+                        Note(
+                          id: widget.note.id, 
+                          noteTitle: titleController.text.toString().trim(),
+                          noteText: textController.text.toString().trim(), 
+                          createdTime: DateTime.now()
+                        )
+                      );
                       Navigator.pop(context);
                     }
                     
@@ -196,17 +203,6 @@ class _EditNotePageState extends State<EditNotePage> {
         ),
       ),
     );
-  }
-
-  Future updateNote(int? id, String title, String text) async {
-    final note = Note(
-      id: id!,
-      noteTitle: title,
-      noteText: text,
-      createdTime: DateTime.now()
-    );
-
-    await NoteDatabase.instance.update(note);
   }
 
 }

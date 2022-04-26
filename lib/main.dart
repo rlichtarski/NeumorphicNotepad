@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:notepad/pages/add_note.dart';
 import 'package:notepad/pages/notes_list.dart';
+import 'package:notepad/view_models/NoteViewModel.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,12 +13,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const NotesListPage(title: 'Notepad'),
-        '/add_note': (context) => const AddNotePage(title: 'Add a note'),
-      },
+    return ChangeNotifierProvider<NoteViewModel>(
+      create: (_) => NoteViewModel(),
+      child: NeumorphicApp(
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const NotesListPage(title: 'Notepad'),
+          '/add_note': (context) => const AddNotePage(title: 'Add a note'),
+        },
+      ),
     );
   }
 }

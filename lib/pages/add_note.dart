@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:notepad/db/notes_db.dart';
 import 'package:notepad/models/note.dart';
+import 'package:notepad/view_models/NoteViewModel.dart';
+import 'package:provider/provider.dart';
 
 class AddNotePage extends StatefulWidget {
   const AddNotePage({ Key? key, required this.title }) : super(key: key);
@@ -172,7 +171,14 @@ class _AddNotePageState extends State<AddNotePage> {
                         fontSize: 16.0
                       );
                     } else {
-                      addNote(title, text);
+                      final noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+                      noteViewModel.addNoteToDB(
+                        Note(
+                          noteTitle: title,
+                          noteText: text,
+                          createdTime: DateTime.now()
+                        )
+                      );
                       Navigator.pop(context);
                     }
                   },
@@ -183,16 +189,6 @@ class _AddNotePageState extends State<AddNotePage> {
         ),
       ),
     );
-  }
-
-  Future addNote(String title, String text) async {
-    final note = Note(
-      noteTitle: title,
-      noteText: text,
-      createdTime: DateTime.now()
-    );
-
-    await NoteDatabase.instance.addNoteToDB(note);
   }
 
 }

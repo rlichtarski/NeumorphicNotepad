@@ -8,6 +8,8 @@ class NoteDatabase {
 
   static Database? _database;
 
+  factory NoteDatabase() => instance;
+
   NoteDatabase._init();
 
   Future<Database> get database async {
@@ -69,7 +71,7 @@ class NoteDatabase {
     return result.map((json) => Note.fromJson(json)).toList();
   }
 
-  Future<int> update(Note note) async {
+  Future<int> updateNote(Note note) async {
     final db = await instance.database;
     return await db.update(
       tableName,
@@ -79,7 +81,7 @@ class NoteDatabase {
     );
   }
 
-  Future<int> delete(int id) async {
+  Future<int> deleteNote(int id) async {
     final db = await instance.database;
     return await db.delete(
       tableName,
