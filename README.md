@@ -7,7 +7,7 @@ A Flutter Notepad app with Neumorphic design.
 - [Provider](https://pub.dev/packages/provider) for state management
 
 # Preview of the app:
-![](https://github.com/rradzzio/NeumorphicNotepad/blob/main/notes2.png)
+![](https://github.com/rradzzio/NeumorphicNotepad/blob/main/notes_2.png)
 ![](https://github.com/rradzzio/NeumorphicNotepad/blob/main/add_note2.png)
 ![](https://github.com/rradzzio/NeumorphicNotepad/blob/main/read_note2.png)
 ![](https://github.com/rradzzio/NeumorphicNotepad/blob/main/delete2.png)
